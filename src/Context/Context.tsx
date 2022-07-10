@@ -79,7 +79,6 @@ export const ContextProvider: React.FC<{ children: ReactElement }> = ({
   const navigate = useNavigate();
 
   const removeUser = async () => {
-    toast.error('Enable to fetch user');
     localStorage.removeItem('token');
     setToken(null);
     setUser(null);
