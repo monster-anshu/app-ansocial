@@ -25,7 +25,7 @@ interface Proptypes {
 
 const Share: React.FC<Proptypes> = ({ onShare }) => {
   const [text, setText] = useState('');
-  const { fetchAxios } = useContext(Context);
+  const { fetchAxios, user } = useContext(Context);
   const [file, setFile] = useState<File | null | undefined>(null);
   const [isLoading, setIsLoading] = useState(false);
   const handelSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -69,7 +69,7 @@ const Share: React.FC<Proptypes> = ({ onShare }) => {
         </LoaderDiv>
       )}
       <Top>
-        <Img src={'/assets/person/3.jpeg'} />
+        <Img src={user?.profilePicture} />
         <Input
           placeholder={"What's in your Mind ? (at least 4 character)"}
           rows={4}

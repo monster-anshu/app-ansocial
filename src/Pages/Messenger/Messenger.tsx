@@ -5,18 +5,12 @@ import { Container } from './style';
 import { UserType } from 'Types';
 import { useLocation } from 'react-router-dom';
 
-interface user {
-  _id: string;
-  name: string;
-  profilePicture: string;
-}
-
 const Messenger = () => {
   const location = useLocation();
   const { fetchAxios, socket } = useContext(Context);
   const [selected, setSelected] = useState<string | null>(null);
-  const [users, setUsers] = useState<user[]>([]);
-  const [selectedUser, setSelectedUser] = useState<user>();
+  const [users, setUsers] = useState<UserType[]>([]);
+  const [selectedUser, setSelectedUser] = useState<UserType>();
   const [onlineUsers, setOnlineUsers] = useState<
     {
       userId: string;
@@ -72,11 +66,7 @@ const Messenger = () => {
     <Container>
       <ChatsMenu selected={selected} onSelect={handelSelect} users={users} />
       {selectedUser ? (
-        <ChatContainer
-          name={selectedUser['name']}
-          img={selectedUser['profilePicture']}
-          id={selectedUser['_id']}
-        />
+        <ChatContainer reciver={selectedUser} />
       ) : (
         <NotSelectedChat />
       )}

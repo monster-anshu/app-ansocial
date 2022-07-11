@@ -76,7 +76,7 @@ const Post: React.FC<Proptypes> = ({ post, onDelete }) => {
       <Top>
         <TopLeft>
           <ProfilePicture
-            src={'/assets/person/1.jpeg'}
+            src={post.user.profilePicture}
             onClick={handelProfileClick}
           />
           <TimeContainer>

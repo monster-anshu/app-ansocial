@@ -16,7 +16,7 @@ import {
 } from './style';
 import { Context } from 'Context';
 const Topbar = () => {
-  const { handelLogout } = useContext(Context);
+  const { handelLogout, user } = useContext(Context);
   const [text, setText] = useState('');
 
   const navigate = useNavigate();
@@ -67,7 +67,7 @@ const Topbar = () => {
             <i className="bx bx-log-out"></i>
           </Icon>
         </Icons>
-        <Img src="/assets/person/1.jpeg" />
+        <Img src={user?.profilePicture} />
       </Right>
     </Container>
   );

@@ -210,7 +210,7 @@ export const ContextProvider: React.FC<{ children: ReactElement }> = ({
 
   const handelLogout = () => {
     setToken(null);
-    socket?.emit('disconnect');
+    // socket?.emit('disconnect');
     localStorage.removeItem('token');
     navigate('/login');
   };

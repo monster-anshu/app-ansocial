@@ -1,6 +1,7 @@
 import { Context } from 'Context';
 import React, { useContext } from 'react';
-import { Container, Profile } from './style';
+import { Container } from './style';
+import User from './User';
 
 interface Proptypes {
   onlineUsersId: {
@@ -11,18 +12,11 @@ interface Proptypes {
 
 const Active: React.FC<Proptypes> = ({ onlineUsersId }) => {
   const { user } = useContext(Context);
+
   return (
     <Container>
       {onlineUsersId.map(
-        (i) =>
-          user?._id !== i.userId && (
-            <Profile key={i.userId}>
-              <div>
-                <img src={'/assets/person/1.jpeg'} />
-              </div>
-              <p>{i.userId}</p>
-            </Profile>
-          ),
+        (i) => user?._id !== i.userId && <User id={i.userId} key={i.userId} />,
       )}
     </Container>
   );

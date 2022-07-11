@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import {
   EmptyUser,
   Home,
@@ -15,37 +15,36 @@ import { ChildMain, MainContainer } from 'Style';
 import { Context } from 'Context';
 const Main = () => {
   const { getUser, user } = useContext(Context);
-  const [isLoading, setIsLoading] = useState(true);
   const location = useLocation();
 
   useEffect(() => {
     (async () => {
       await getUser?.();
-      setIsLoading(false);
+      // const a = await fetch(
+      //   'https://xsgames.co/randomusers/avatar.php?g=pixel',
+      // );
+      // console.log(a);
     })();
   }, []);
 
-  return isLoading ? (
-    <Loader />
+  return user ? (
+    <>
+      <Topbar />
+      <MainContainer>
+        {location.pathname !== '/messenger' && <Sidebar />}
+        <ChildMain>
+          <Routes>
+            <Route path={'/home'} element={<Home />} />
+            <Route path={'/profile/:username'} element={<Profile />} />
+            <Route path={'/profile'} element={<EmptyUser />} />
+            <Route path={'/messenger'} element={<Messenger />} />
+            <Route path={'*'} element={<>Not found</>} />
+          </Routes>
+        </ChildMain>
+      </MainContainer>
+    </>
   ) : (
-    user && (
-      <>
-        <Topbar />
-        <MainContainer>
-          {location.pathname !== '/messenger' && <Sidebar />}
-
-          <ChildMain>
-            <Routes>
-              <Route path={'/home'} element={<Home />} />
-              <Route path={'/profile/:username'} element={<Profile />} />
-              <Route path={'/profile'} element={<EmptyUser />} />
-              <Route path={'/messenger'} element={<Messenger />} />
-              <Route path={'*'} element={<>Not found</>} />
-            </Routes>
-          </ChildMain>
-        </MainContainer>
-      </>
-    )
+    <Loader />
   );
 };
 

@@ -14,6 +14,7 @@ const Conversation: React.FC<Proptypes> = ({
   name,
   id,
   isSelected,
+  img,
 }) => {
   const handelClick = () => {
     onClick?.(id);
@@ -21,7 +22,7 @@ const Conversation: React.FC<Proptypes> = ({
 
   return (
     <Container onClick={handelClick} isSelected={isSelected}>
-      <img src={'/assets/person/1.jpeg'} />
+      <img src={img} />
       <Name>{name}</Name>
     </Container>
   );

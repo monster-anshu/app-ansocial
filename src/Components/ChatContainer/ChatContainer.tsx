@@ -1,17 +1,15 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Chats, Container } from './style';
-import { Chat, SendMessage } from 'Components';
+import { Chat, SendMessage, Loader } from 'Components';
 import { Context } from 'Context';
 import { v4 } from 'uuid';
-import { MessageType } from 'Types';
+import { MessageType, UserType } from 'Types';
 
 interface Proptypes {
-  name: string;
-  id: string;
-  img: string;
+  reciver: UserType;
 }
 
-const ChatContainer: React.FC<Proptypes> = ({ id }) => {
+const ChatContainer: React.FC<Proptypes> = ({ reciver }) => {
   const { fetchAxios, user, socket } = useContext(Context);
 
   const ref = useRef<HTMLDivElement | null>(null);
@@ -21,7 +19,7 @@ const ChatContainer: React.FC<Proptypes> = ({ id }) => {
   const fetchChat = () => {
     setMessages([]);
     fetchAxios({
-      url: `/chat/getChat/${id}`,
+      url: `/chat/getChat/${reciver._id}`,
     })
       .then((res) => {
         setMessages(res.data);
@@ -53,7 +51,7 @@ const ChatContainer: React.FC<Proptypes> = ({ id }) => {
     addMessage(newMsg);
     fetchAxios({
       method: 'POST',
-      url: `/chat/${id}`,
+      url: `/chat/${reciver._id}`,
       data: {
         message: newMsg,
       },
@@ -75,7 +73,7 @@ const ChatContainer: React.FC<Proptypes> = ({ id }) => {
         createdAt: message.createdAt,
       };
 
-      if (!(newMessage.sender === id)) return;
+      if (!(newMessage.sender === reciver._id)) return;
       addMessage(newMessage);
     });
   }, [socket, messages]);
@@ -84,18 +82,28 @@ const ChatContainer: React.FC<Proptypes> = ({ id }) => {
     fetchChat();
   }, []);
 
-  return (
-    user && (
-      <Container>
-        <Chats ref={ref}>
-          {messages.map((message) => (
-            <Chat key={message._id} message={message} userId={user?._id} />
-          ))}
-        </Chats>
+  return user ? (
+    <Container>
+      <Chats ref={ref}>
+        {messages.map((message) => (
+          <Chat
+            key={message._id}
+            message={message}
+            isMine={message.sender === user._id}
+            profilePicture={
+              message.sender === user._id
+                ? user.profilePicture
+                : reciver.profilePicture
+            }
+            username={message.sender}
+          />
+        ))}
+      </Chats>
 
-        <SendMessage onSubmit={handelSubmit} />
-      </Container>
-    )
+      <SendMessage onSubmit={handelSubmit} />
+    </Container>
+  ) : (
+    <Loader />
   );
 };
 

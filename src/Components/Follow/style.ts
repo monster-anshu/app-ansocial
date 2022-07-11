@@ -14,6 +14,8 @@ export const Details = styled.div`
   gap: 30px;
 `;
 export const Item = styled.div`
+  cursor: pointer;
+
   text-align: center;
   span {
     font-size: 0.9em;
@@ -52,8 +54,8 @@ export const MsgBTN = styled.button`
   cursor: pointer;
 `;
 export const AlreadyFollowBtn = styled.button`
-  background-color: #ffffff;
   border: none;
+  background-color: #ffffff;
   color: #0095f6;
   border-radius: 5px;
   outline: 2px solid #0095f6;

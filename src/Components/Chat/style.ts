@@ -17,6 +17,7 @@ export const Container = styled.div<Proptypes>`
     gap: 6px;
     max-width: 80%;
     margin: 5px;
+    cursor: pointer;
     img {
       height: 40px;
       width: 40px;

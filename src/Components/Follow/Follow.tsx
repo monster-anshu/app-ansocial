@@ -13,6 +13,7 @@ import {
 import { Context } from 'Context';
 import { UserType } from 'Types';
 import { useNavigate } from 'react-router-dom';
+import TransitionsModal from './Model';
 
 interface Proptypes {
   user: UserType;
@@ -20,13 +21,21 @@ interface Proptypes {
   setUser: React.Dispatch<React.SetStateAction<UserType | null>>;
 }
 const Follow: React.FC<Proptypes> = ({ user, isCurrent, setUser }) => {
-  if (!user) return <>User not found</>;
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [isFollowed, setIsFollowed] = useState<boolean | undefined>(
     user.amIFollowing,
   );
+  const [open, setOpen] = useState(false);
   const { fetchAxios } = useContext(Context);
+  const [type, setType] = useState(true);
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+  const handelClose = () => {
+    setOpen(false);
+  };
 
   const handelRedirect = () => {
     navigate('/messenger', { state: user });
@@ -60,13 +69,31 @@ const Follow: React.FC<Proptypes> = ({ user, isCurrent, setUser }) => {
 
   return (
     <Container>
+      {open && (
+        <TransitionsModal
+          isFollower={type}
+          handleClose={handelClose}
+          open={open}
+          user={user}
+        />
+      )}
       <Details>
-        <Item>
-          <H2>Follower</H2>
+        <Item
+          onClick={() => {
+            setType(true);
+            handleOpen();
+          }}
+        >
+          <H2>Followers</H2>
           <span>{user.userFollowers}</span>
         </Item>
-        <Item>
-          <H2>Following</H2>
+        <Item
+          onClick={() => {
+            setType(false);
+            handleOpen();
+          }}
+        >
+          <H2>Followings</H2>
           <span>{user.userFollowing}</span>
         </Item>
         <Item>

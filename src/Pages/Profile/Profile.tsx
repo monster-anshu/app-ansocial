@@ -77,7 +77,7 @@ const Profile = () => {
     <Container id="profileScoller">
       <ProfileData>
         <CoverPicture src={'/assets/post/3.jpeg'} />
-        <ProfilePicture src={'/assets/person/7.jpeg'} />
+        <ProfilePicture src={user.profilePicture} />
         <ProfileInfo>
           <h2>{user.name}</h2>
           <p>Hello my friends</p>
