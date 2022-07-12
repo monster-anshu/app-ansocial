@@ -6,7 +6,7 @@ import { Data, Follow, Header, ModalContainer, User } from './ModalStyle';
 import { UserType } from 'Types';
 import { Context } from 'Context';
 import InfiniteScroll from 'react-infinite-scroll-component';
-
+import { Loader } from 'Components';
 interface Proptype {
   open: boolean;
   handleClose: () => void;
@@ -22,18 +22,19 @@ const TransitionsModal: React.FC<Proptype> = ({
   const { fetchAxios } = React.useContext(Context);
   const [page, setPage] = useState(1);
   const [users, setUsers] = useState<UserType[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const fetch = (Fid: string, Fpage: number) => {
-    console.log('Fecthing');
-
     fetchAxios({
       url: `/user/${
         isFollower ? 'getFollowers' : 'getFollowing'
       }/${Fid}?page=${Fpage}`,
-    }).then(({ data }) => {
-      const newUsers = users.concat(data);
-      setUsers(newUsers);
-    });
+    })
+      .then(({ data }) => {
+        const newUsers = users.concat(data);
+        setUsers(newUsers);
+      })
+      .finally(() => setLoading(false));
   };
 
   const handelFollow = (Fuser: UserType) => {
@@ -44,6 +45,7 @@ const TransitionsModal: React.FC<Proptype> = ({
         amIFollowing: !Fuser.amIFollowing,
       };
     });
+
     setUsers(arr);
     fetchAxios({
       url: `/user/${Fuser.amIFollowing ? 'unfollow' : 'follow'}/${Fuser._id}`,
@@ -73,37 +75,45 @@ const TransitionsModal: React.FC<Proptype> = ({
             <hr />
           </Header>
           <Data id={'followScroll'}>
-            <InfiniteScroll
-              dataLength={users.length}
-              hasMore={users.length < user.userFollowers}
-              loader={<>Loading</>}
-              next={() => {
-                fetch(user._id, page);
-                setPage((cpage) => cpage + 1);
-              }}
-              scrollableTarget={'followScroll'}
-            >
-              {users.map((Fuser) => (
-                <User key={Fuser._id}>
-                  <div>
-                    <img src={Fuser.profilePicture} alt="" />
-                    <div>
-                      <span>{Fuser.username}</span>
-                      <p>{Fuser.name}</p>
-                    </div>
-                  </div>
-                  <Follow
-                    isFollowing={Fuser.amIFollowing}
-                    type={'button'}
-                    onClick={() => {
-                      handelFollow(Fuser);
-                    }}
-                  >
-                    {Fuser.amIFollowing ? 'Following' : 'Follow'}
-                  </Follow>
-                </User>
+            {loading && <Loader />}
+            {!loading &&
+              (users.length ? (
+                <InfiniteScroll
+                  dataLength={users.length}
+                  hasMore={users.length < user.userFollowers}
+                  loader={<>Loading</>}
+                  next={() => {
+                    fetch(user._id, page);
+                    setPage((cpage) => cpage + 1);
+                  }}
+                  scrollableTarget={'followScroll'}
+                >
+                  {users.map((Fuser) => (
+                    <User key={Fuser._id}>
+                      <div>
+                        <img src={Fuser.profilePicture} alt="" />
+                        <div>
+                          <span>{Fuser.username}</span>
+                          <p>{Fuser.name}</p>
+                        </div>
+                      </div>
+                      <Follow
+                        isFollowing={Fuser.amIFollowing}
+                        type={'button'}
+                        onClick={() => {
+                          handelFollow(Fuser);
+                        }}
+                      >
+                        {Fuser.amIFollowing ? 'Following' : 'Follow'}
+                      </Follow>
+                    </User>
+                  ))}
+                </InfiniteScroll>
+              ) : (
+                <>
+                  <p>No {isFollower ? 'Follower' : 'Following'} </p>
+                </>
               ))}
-            </InfiniteScroll>
           </Data>
         </ModalContainer>
       </Fade>

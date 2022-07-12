@@ -5,11 +5,11 @@ export const Container = styled.form`
   padding: 10px 20px;
   box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px,
     rgba(0, 0, 0, 0.3) 0px 18px 36px -18px;
-  display: flex;
-  flex-direction: column;
+  margin: 0 auto;
+
   background-color: #ffffff;
-  flex: 1;
   position: relative;
+  max-width: 600px;
 `;
 export const LoaderDiv = styled.div`
   position: absolute;

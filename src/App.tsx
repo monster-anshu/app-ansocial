@@ -9,29 +9,21 @@ import {
   ServerDown,
   Signup,
 } from 'Pages';
-import { Loader, Sidebar, Topbar } from 'Components';
-import { Route, Routes, useLocation } from 'react-router-dom';
+import { Loader, Topbar } from 'Components';
+import { Route, Routes } from 'react-router-dom';
 import { ChildMain, MainContainer } from 'Style';
 import { Context } from 'Context';
 const Main = () => {
   const { getUser, user } = useContext(Context);
-  const location = useLocation();
 
   useEffect(() => {
-    (async () => {
-      await getUser?.();
-      // const a = await fetch(
-      //   'https://xsgames.co/randomusers/avatar.php?g=pixel',
-      // );
-      // console.log(a);
-    })();
+    getUser?.();
   }, []);
 
   return user ? (
     <>
       <Topbar />
       <MainContainer>
-        {location.pathname !== '/messenger' && <Sidebar />}
         <ChildMain>
           <Routes>
             <Route path={'/home'} element={<Home />} />

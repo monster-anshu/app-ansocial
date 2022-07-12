@@ -15,11 +15,10 @@ const Feed = () => {
       url: `/post?page=${page}`,
     }).then(({ data }) => {
       setTotal(data.total);
-      const arr = [...posts, ...data.posts];
-      // .sort(
-      //   (a, b) =>
-      //     new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-      // );
+      const arr = [...posts, ...data.posts].sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+      );
       setPosts(arr);
       setPage((page) => page + 1);
     });
@@ -51,6 +50,9 @@ const Feed = () => {
         hasMore={posts.length < total}
         loader={<></>}
         scrollableTarget={'scrollable'}
+        style={{
+          overflow: 'unset',
+        }}
       >
         <Details>
           {posts.map((x) => (

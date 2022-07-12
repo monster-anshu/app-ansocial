@@ -41,6 +41,13 @@ const Follow: React.FC<Proptypes> = ({ user, isCurrent, setUser }) => {
     navigate('/messenger', { state: user });
   };
 
+  const increaseFollow = (
+    increase: boolean,
+    key: 'userFollowers' | 'userFollowing',
+  ) => {
+    setUser({ ...user, userFollowers: user[key] + (increase ? 1 : -1) });
+  };
+
   const handelFollow = () => {
     setIsLoading(true);
     fetchAxios({
@@ -49,7 +56,7 @@ const Follow: React.FC<Proptypes> = ({ user, isCurrent, setUser }) => {
     })
       .then(() => {
         setIsFollowed(true);
-        setUser({ ...user, userFollowers: user.userFollowers + 1 });
+        increaseFollow(true, 'userFollowers');
       })
       .finally(() => setIsLoading(false));
   };
@@ -62,7 +69,7 @@ const Follow: React.FC<Proptypes> = ({ user, isCurrent, setUser }) => {
     })
       .then(() => {
         setIsFollowed(false);
-        setUser({ ...user, userFollowers: user.userFollowers - 1 });
+        increaseFollow(false, 'userFollowers');
       })
       .finally(() => setIsLoading(false));
   };

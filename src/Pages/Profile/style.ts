@@ -35,6 +35,7 @@ export const ProfilePicture = styled.img`
   margin: auto;
   top: 150px;
   box-shadow: 0 0 0 3px #ffffff;
+  background-color: #1877f2;
 `;
 export const ProfileInfo = styled.div`
   text-align: center;
@@ -47,11 +48,14 @@ export const ProfileInfo = styled.div`
 `;
 export const Details = styled.div`
   display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
+  justify-content: start;
+  align-items: start;
   padding: 10px 30px;
   gap: 20px;
   flex-wrap: wrap-reverse;
+  & > form {
+    margin: 0;
+  }
 `;
 
 export const Posts = styled.div`
