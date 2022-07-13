@@ -50,6 +50,7 @@ interface ContextTypes {
   msgAudioRef?: React.RefObject<HTMLAudioElement>;
   handleRemoveUnread?: (id: string) => void;
   unreadMsg: MessageType[];
+  socket?: Socket;
 }
 
 export const Context = createContext<ContextTypes>({
@@ -65,7 +66,7 @@ export const ContextProvider: React.FC<{ children: ReactElement }> = ({
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [user, setUser] = useState<ContextTypes['user']>(null);
   const [unreadMsg, setUnreadMsg] = useState<MessageType[]>([]);
-  const [socket, setSocket] = useState<Socket | null>(null);
+  const [socket, setSocket] = useState<Socket | undefined>();
   const msgAudioRef = useRef<HTMLAudioElement>(null);
   const location = useLocation();
   const fetchAxios = axios.create({
@@ -216,6 +217,7 @@ export const ContextProvider: React.FC<{ children: ReactElement }> = ({
 
   const handleLogout = () => {
     setToken(null);
+    setSocket(undefined);
     socket?.emit('logout');
     localStorage.removeItem('token');
     navigate('/login');
@@ -244,6 +246,7 @@ export const ContextProvider: React.FC<{ children: ReactElement }> = ({
     getUser,
     fetchAxios,
     setUser,
+    socket,
     handleLogout,
     msgAudioRef,
     handleRemoveUnread,
