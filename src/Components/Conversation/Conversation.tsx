@@ -1,5 +1,6 @@
-import React from 'react';
-import { Container, Name } from './style';
+import { Context } from 'Context';
+import React, { useContext, useEffect, useState } from 'react';
+import { Container, Name, Unread } from './style';
 
 interface Proptypes {
   onClick?: (id: string) => void;
@@ -16,14 +17,26 @@ const Conversation: React.FC<Proptypes> = ({
   isSelected,
   img,
 }) => {
+  const { unreadMsg } = useContext(Context);
+  const [unRead, setUnRead] = useState(0);
+  const getUnread = () => {
+    const length = unreadMsg.filter((msg) => msg.sender === id).length;
+    setUnRead(length);
+  };
+
   const handleClick = () => {
     onClick?.(id);
   };
+
+  useEffect(() => {
+    getUnread();
+  }, [unreadMsg]);
 
   return (
     <Container onClick={handleClick} isSelected={isSelected}>
       <img src={img} />
       <Name>{name}</Name>
+      {unRead > 0 && <Unread>{unRead}</Unread>}
     </Container>
   );
 };

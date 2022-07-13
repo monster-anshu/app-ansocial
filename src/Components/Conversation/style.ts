@@ -22,8 +22,22 @@ export const Container = styled.div<{ isSelected?: boolean }>`
     isSelected &&
     css`
       background-color: #ffffff;
-      outline: 2px solid black;
     `}
   margin: 5px 0;
 `;
-export const Name = styled.span``;
+export const Name = styled.span`
+  flex-grow: 1;
+`;
+
+export const Unread = styled.span`
+  background-color: #1877f2;
+  height: 20px;
+  width: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  font-weight: 500;
+  color: white;
+  font-size: 12px;
+`;

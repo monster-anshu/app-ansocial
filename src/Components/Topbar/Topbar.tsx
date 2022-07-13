@@ -16,7 +16,7 @@ import {
 } from './style';
 import { Context } from 'Context';
 const Topbar = () => {
-  const { handleLogout, user } = useContext(Context);
+  const { handleLogout, user, unreadMsg } = useContext(Context);
   const [text, setText] = useState('');
 
   const navigate = useNavigate();
@@ -54,10 +54,14 @@ const Topbar = () => {
           <Link to={'/profile'}>Profile</Link>
         </Linkes>
         <Icons>
-          <Icon data-count={8}>
+          <Icon>
             <Person />
           </Icon>
-          <Icon onClick={handleNavigateChat} data-count={8}>
+          <Icon
+            onClick={handleNavigateChat}
+            data-count={unreadMsg.length}
+            count={unreadMsg.length}
+          >
             <Chat />
           </Icon>
           {/* <Icon data-count={8}>

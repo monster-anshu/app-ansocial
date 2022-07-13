@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 export const Container = styled.div`
   height: 50px;
@@ -56,25 +56,31 @@ export const Icons = styled.div`
   display: flex;
   align-items: center;
 `;
-export const Icon = styled.div`
+export const Icon = styled.div<{
+  count?: number;
+}>`
   margin-right: 20px;
   position: relative;
   cursor: pointer;
-  /* &::before {
-    content: attr(data-count);
-    padding: 2px;
-    position: absolute;
-    top: -10px;
-    right: -8px;
-    width: 15px;
-    height: 15px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: red;
-    border-radius: 50%;
-    font-size: 12px;
-  } */
+  ${({ count }) =>
+    count &&
+    css`
+      &::before {
+        content: attr(data-count);
+        padding: 2px;
+        position: absolute;
+        top: -10px;
+        right: -8px;
+        width: 15px;
+        height: 15px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: red;
+        border-radius: 50%;
+        font-size: 12px;
+      }
+    `}
   i {
     font-size: 1.2rem;
   }

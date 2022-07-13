@@ -3,13 +3,14 @@ import React, {
   createContext,
   ReactElement,
   SetStateAction,
+  useEffect,
   useRef,
   useState,
 } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast, Id } from 'react-toastify';
 import { Socket, io } from 'socket.io-client';
-import { PostType, UserType } from 'Types';
+import { UserType, MessageType } from 'Types';
 
 const host = process.env.REACT_APP_API_URL;
 
@@ -44,11 +45,12 @@ interface ContextTypes {
     tID: Id;
   }) => Promise<boolean>;
   getUser?: () => Promise<boolean>;
-  myPost: PostType[];
-  setMyPost?: React.Dispatch<SetStateAction<PostType[]>>;
   setUser?: React.Dispatch<SetStateAction<null | UserType>>;
   handleLogout?: () => void;
   socket: Socket | null;
+  msgAudioRef?: React.RefObject<HTMLAudioElement>;
+  handleRemoveUnread?: (id: string) => void;
+  unreadMsg: MessageType[];
 }
 
 export const Context = createContext<ContextTypes>({
@@ -56,21 +58,17 @@ export const Context = createContext<ContextTypes>({
   token: null,
   host,
   fetchAxios,
-  myPost: [],
   socket: null,
+  unreadMsg: [],
 });
 export const ContextProvider: React.FC<{ children: ReactElement }> = ({
   children,
 }) => {
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [user, setUser] = useState<ContextTypes['user']>(null);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [myPost, setMyPost] = useState<PostType[]>([]);
-
-  const [socket, setSocket] = useState<Socket | null>(null);
-
+  const [unreadMsg, setUnreadMsg] = useState<MessageType[]>([]);
   const msgAudioRef = useRef<HTMLAudioElement>(null);
-
+  const location = useLocation();
   const fetchAxios = axios.create({
     baseURL: host,
     headers: {
@@ -81,13 +79,22 @@ export const ContextProvider: React.FC<{ children: ReactElement }> = ({
 
   const navigate = useNavigate();
 
+  const IO = useRef<null | Socket>(null);
+
   const removeUser = async () => {
     localStorage.removeItem('token');
     setToken(null);
     setUser(null);
     navigate('/login');
   };
-
+  const handleAddUnread = (msg: MessageType) => {
+    const newMsg = unreadMsg.concat(msg);
+    setUnreadMsg(newMsg);
+  };
+  const handleRemoveUnread = (id: string) => {
+    const newMsg = unreadMsg.filter((msg) => msg.sender !== id);
+    setUnreadMsg(newMsg);
+  };
   const getUser = async () => {
     if (!token || !host) {
       removeUser();
@@ -103,12 +110,10 @@ export const ContextProvider: React.FC<{ children: ReactElement }> = ({
     })
       .then(({ data }) => {
         setUser({ ...data.user });
-        const IO = io(process.env.REACT_APP_SOCKET_URL as string);
-        setSocket(IO);
-        IO.emit('online', { userId: data.user._id });
-        IO.on('reciveChat', () => {
-          msgAudioRef.current?.play();
-        });
+        const socket = io(process.env.REACT_APP_SOCKET_URL as string);
+        socket.emit('online', { userId: data.user._id });
+        IO.current = socket;
+        // setSocket(IO.c);
         return true;
       })
       .catch((err) => {
@@ -155,7 +160,6 @@ export const ContextProvider: React.FC<{ children: ReactElement }> = ({
           });
           return false;
         }
-        console.log(err);
         toast.update(tID, {
           isLoading: false,
           render: 'User alredy exist',
@@ -216,11 +220,26 @@ export const ContextProvider: React.FC<{ children: ReactElement }> = ({
 
   const handleLogout = () => {
     setToken(null);
-    socket?.emit('logout');
+    IO.current?.emit('logout');
     localStorage.removeItem('token');
     navigate('/login');
   };
-
+  useEffect(() => {
+    if (!user) return;
+    IO.current?.off('reciveChat');
+    IO.current?.on('reciveChat', (newMsg: MessageType) => {
+      fetchAxios.get(`/user/id/${newMsg.sender}`).then((res) => {
+        const mUser: UserType = res.data.user;
+        if (location.pathname !== '/messenger') {
+          toast.info(`${mUser.name} : ${newMsg.text}`, {
+            position: 'bottom-right',
+          });
+          msgAudioRef.current?.play();
+        }
+        handleAddUnread(newMsg);
+      });
+    });
+  }, [user, unreadMsg]);
   const value: ContextTypes = {
     user,
     token,
@@ -228,11 +247,12 @@ export const ContextProvider: React.FC<{ children: ReactElement }> = ({
     signUp,
     getUser,
     fetchAxios,
-    myPost,
-    setMyPost,
     setUser,
     handleLogout,
-    socket,
+    socket: null,
+    msgAudioRef,
+    handleRemoveUnread,
+    unreadMsg,
   };
   return (
     <Context.Provider value={value}>

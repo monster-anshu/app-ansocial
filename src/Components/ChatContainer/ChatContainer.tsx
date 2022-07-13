@@ -10,7 +10,8 @@ interface Proptypes {
 }
 
 const ChatContainer: React.FC<Proptypes> = ({ reciver }) => {
-  const { fetchAxios, user, socket } = useContext(Context);
+  const { fetchAxios, user, handleRemoveUnread, unreadMsg } =
+    useContext(Context);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const ref = useRef<HTMLDivElement | null>(null);
@@ -21,11 +22,9 @@ const ChatContainer: React.FC<Proptypes> = ({ reciver }) => {
     setMessages([]);
     fetchAxios({
       url: `/chat/getChat/${reciver._id}`,
-    })
-      .then((res) => {
-        setMessages(res.data);
-      })
-      .catch((err) => console.log(err));
+    }).then((res) => {
+      setMessages(res.data);
+    });
   };
 
   const scrollToBottom = () => {
@@ -59,28 +58,28 @@ const ChatContainer: React.FC<Proptypes> = ({ reciver }) => {
     });
   };
 
+  const addRecivedMsg = () => {
+    const my = unreadMsg.filter((msg) => msg.sender === reciver._id);
+    const unique = my.filter((m) => {
+      const check = messages.some((n) => n._id === m._id);
+      return !check;
+    });
+    if (!unique.length) return;
+    handleRemoveUnread?.(reciver._id);
+    const msg = messages.concat(unique);
+    audioRef.current?.play();
+    setMessages(msg);
+  };
+  useEffect(() => {
+    addRecivedMsg();
+  }, [unreadMsg]);
+
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
 
   useEffect(() => {
-    if (!socket) return;
-
-    socket.on('reciveChat', (message) => {
-      const newMessage: MessageType = {
-        _id: message._id,
-        sender: message.sender,
-        text: message.text,
-        createdAt: message.createdAt,
-      };
-
-      if (!(newMessage.sender === reciver._id)) return;
-      audioRef.current?.play();
-      addMessage(newMessage);
-    });
-  }, [socket, messages]);
-
-  useEffect(() => {
+    handleRemoveUnread?.(reciver._id);
     fetchChat();
   }, []);
 
