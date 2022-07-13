@@ -38,7 +38,7 @@ const Post: React.FC<Proptypes> = ({ post, onDelete }) => {
   const [commentCount, setCommentCount] = useState(post.postComments);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
-  const handellike = () => {
+  const handlelike = () => {
     setAnimation(true);
     if (isLiked) return;
     setIsLiked(true);
@@ -49,7 +49,7 @@ const Post: React.FC<Proptypes> = ({ post, onDelete }) => {
     });
     setCommentCount(commentCount);
   };
-  const handelUnlike = () => {
+  const handleUnlike = () => {
     if (!isLiked) return;
     setIsLiked(false);
     setLikeCount(likeCount - 1);
@@ -59,11 +59,11 @@ const Post: React.FC<Proptypes> = ({ post, onDelete }) => {
     });
   };
 
-  const handelProfileClick = () => {
+  const handleProfileClick = () => {
     navigate(`/profile/${post.user.username}`);
   };
 
-  const handelDelete = () => {
+  const handleDelete = () => {
     onDelete?.(post._id);
     fetchAxios({
       method: 'DELETE',
@@ -77,7 +77,7 @@ const Post: React.FC<Proptypes> = ({ post, onDelete }) => {
         <TopLeft>
           <ProfilePicture
             src={post.user.profilePicture}
-            onClick={handelProfileClick}
+            onClick={handleProfileClick}
           />
           <TimeContainer>
             <ProfileName>{post.user.name}</ProfileName>
@@ -89,7 +89,7 @@ const Post: React.FC<Proptypes> = ({ post, onDelete }) => {
             <MoreVert onClick={() => setIsActive(!isActive)} />
           ) : null}
           <Options isActive={isActive}>
-            <li onClick={handelDelete}>Delete</li>
+            <li onClick={handleDelete}>Delete</li>
             <li>Edit</li>
           </Options>
         </TopRight>
@@ -99,7 +99,7 @@ const Post: React.FC<Proptypes> = ({ post, onDelete }) => {
           <PostImgContainer
             clicked={animation}
             onAnimationEnd={() => setAnimation(false)}
-            onDoubleClick={handellike}
+            onDoubleClick={handlelike}
           >
             {isLoading && <Loader />}
             <img
@@ -123,7 +123,7 @@ const Post: React.FC<Proptypes> = ({ post, onDelete }) => {
                 icon={<FavoriteBorder />}
                 checkedIcon={<Favorite />}
                 name="checkedH"
-                onClick={isLiked ? handelUnlike : handellike}
+                onClick={isLiked ? handleUnlike : handlelike}
               />
             }
             label={likeCount}

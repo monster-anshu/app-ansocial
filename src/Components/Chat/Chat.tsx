@@ -19,14 +19,14 @@ const Chat: React.FC<Proptypes> = ({
 }) => {
   const navigate = useNavigate();
 
-  const handelClick = () => {
+  const handleClick = () => {
     navigate(`/id/${username}`);
   };
 
   return (
     <Container isMine={isMine}>
       <div>
-        <img src={profilePicture} onClick={handelClick} />
+        <img src={profilePicture} onClick={handleClick} />
         <p>
           {message.text}
           <span> {GetAgo(message.createdAt)} </span>

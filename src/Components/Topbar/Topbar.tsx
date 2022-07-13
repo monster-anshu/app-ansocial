@@ -16,19 +16,19 @@ import {
 } from './style';
 import { Context } from 'Context';
 const Topbar = () => {
-  const { handelLogout, user } = useContext(Context);
+  const { handleLogout, user } = useContext(Context);
   const [text, setText] = useState('');
 
   const navigate = useNavigate();
 
-  const handelNavigateHome = () => {
+  const handleNavigateHome = () => {
     navigate('/home');
   };
-  const handelNavigateChat = () => {
+  const handleNavigateChat = () => {
     navigate('/messenger');
   };
 
-  const handelSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
+  const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     navigate(`/profile/${text}`);
   };
@@ -36,10 +36,10 @@ const Topbar = () => {
   return (
     <Container>
       <Left>
-        <Logo onClick={handelNavigateHome}>Ansocial</Logo>
+        <Logo onClick={handleNavigateHome}>Ansocial</Logo>
       </Left>
       <Center>
-        <SearchBar onSubmit={handelSubmit}>
+        <SearchBar onSubmit={handleSubmit}>
           <Search fontSize={'small'} />
           <InputSearch
             placeholder={'Search For Users'}
@@ -57,13 +57,13 @@ const Topbar = () => {
           <Icon data-count={8}>
             <Person />
           </Icon>
-          <Icon onClick={handelNavigateChat} data-count={8}>
+          <Icon onClick={handleNavigateChat} data-count={8}>
             <Chat />
           </Icon>
           {/* <Icon data-count={8}>
             <Notifications />
           </Icon> */}
-          <Icon onClick={handelLogout}>
+          <Icon onClick={handleLogout}>
             <i className="bx bx-log-out"></i>
           </Icon>
         </Icons>

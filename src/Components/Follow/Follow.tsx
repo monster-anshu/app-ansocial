@@ -33,11 +33,11 @@ const Follow: React.FC<Proptypes> = ({ user, isCurrent, setUser }) => {
   const handleOpen = () => {
     setOpen(true);
   };
-  const handelClose = () => {
+  const handleClose = () => {
     setOpen(false);
   };
 
-  const handelRedirect = () => {
+  const handleRedirect = () => {
     navigate('/messenger', { state: user });
   };
 
@@ -48,7 +48,7 @@ const Follow: React.FC<Proptypes> = ({ user, isCurrent, setUser }) => {
     setUser({ ...user, userFollowers: user[key] + (increase ? 1 : -1) });
   };
 
-  const handelFollow = () => {
+  const handleFollow = () => {
     setIsLoading(true);
     fetchAxios({
       url: `/user/follow/${user._id}`,
@@ -60,7 +60,7 @@ const Follow: React.FC<Proptypes> = ({ user, isCurrent, setUser }) => {
       })
       .finally(() => setIsLoading(false));
   };
-  const handelUnFollow = () => {
+  const handleUnFollow = () => {
     setIsLoading(true);
     setIsLoading(true);
     fetchAxios({
@@ -79,7 +79,7 @@ const Follow: React.FC<Proptypes> = ({ user, isCurrent, setUser }) => {
       {open && (
         <TransitionsModal
           isFollower={type}
-          handleClose={handelClose}
+          handleClose={handleClose}
           open={open}
           user={user}
         />
@@ -111,16 +111,16 @@ const Follow: React.FC<Proptypes> = ({ user, isCurrent, setUser }) => {
       {!isCurrent && (
         <Message>
           {isFollowed ? (
-            <AlreadyFollowBtn onClick={handelUnFollow}>
+            <AlreadyFollowBtn onClick={handleUnFollow}>
               {isLoading ? <Loader /> : 'Following'}
             </AlreadyFollowBtn>
           ) : (
-            <FollowBTN onClick={handelFollow}>
+            <FollowBTN onClick={handleFollow}>
               {isLoading ? <Loader /> : 'Follow'}
             </FollowBTN>
           )}
 
-          <MsgBTN onClick={handelRedirect}>Message </MsgBTN>
+          <MsgBTN onClick={handleRedirect}>Message </MsgBTN>
         </Message>
       )}
     </Container>

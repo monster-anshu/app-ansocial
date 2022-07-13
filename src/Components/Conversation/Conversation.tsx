@@ -16,12 +16,12 @@ const Conversation: React.FC<Proptypes> = ({
   isSelected,
   img,
 }) => {
-  const handelClick = () => {
+  const handleClick = () => {
     onClick?.(id);
   };
 
   return (
-    <Container onClick={handelClick} isSelected={isSelected}>
+    <Container onClick={handleClick} isSelected={isSelected}>
       <img src={img} />
       <Name>{name}</Name>
     </Container>

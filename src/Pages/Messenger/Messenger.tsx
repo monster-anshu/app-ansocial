@@ -18,7 +18,7 @@ const Messenger = () => {
     }[]
   >([]);
 
-  const handelSelect = (id: string) => {
+  const handleSelect = (id: string) => {
     setSelected(id);
   };
 
@@ -64,7 +64,7 @@ const Messenger = () => {
 
   return (
     <Container>
-      <ChatsMenu selected={selected} onSelect={handelSelect} users={users} />
+      <ChatsMenu selected={selected} onSelect={handleSelect} users={users} />
       {selectedUser ? (
         <ChatContainer reciver={selectedUser} />
       ) : (

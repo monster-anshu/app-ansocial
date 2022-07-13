@@ -28,7 +28,7 @@ const Share: React.FC<Proptypes> = ({ onShare }) => {
   const { fetchAxios, user } = useContext(Context);
   const [file, setFile] = useState<File | null | undefined>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const handelSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (text.length < 4) {
       toast.dismiss();
@@ -56,12 +56,12 @@ const Share: React.FC<Proptypes> = ({ onShare }) => {
       })
       .finally(() => setIsLoading(false));
   };
-  const handelFile = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleFile = (e: ChangeEvent<HTMLInputElement>) => {
     setFile(e.target.files?.item(0));
   };
 
   return (
-    <Container onSubmit={handelSubmit}>
+    <Container onSubmit={handleSubmit}>
       <ToastContainer />
       {isLoading && (
         <LoaderDiv>
@@ -87,7 +87,7 @@ const Share: React.FC<Proptypes> = ({ onShare }) => {
               type={'file'}
               id={'file'}
               style={{ display: 'none' }}
-              onChange={handelFile}
+              onChange={handleFile}
               multiple={false}
               accept="image/png, image/gif, image/jpeg, image/jpg"
             />

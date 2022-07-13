@@ -24,12 +24,12 @@ const Feed = () => {
     });
   };
 
-  const handelShare = (newPost: PostType) => {
+  const handleShare = (newPost: PostType) => {
     setPosts([newPost, ...posts]);
     setTotal((total) => total + 1);
   };
 
-  const handelDelete = (id: string) => {
+  const handleDelete = (id: string) => {
     const newPost = posts.filter((item) => item['_id'] !== id);
     setPosts(newPost);
     setTotal((total) => total - 1);
@@ -43,7 +43,7 @@ const Feed = () => {
 
   return (
     <Container id="scrollable">
-      <Share onShare={handelShare} />
+      <Share onShare={handleShare} />
       <InfiniteScroll
         dataLength={posts.length}
         next={fetchPost}
@@ -56,7 +56,7 @@ const Feed = () => {
       >
         <Details>
           {posts.map((x) => (
-            <Post post={x} key={x['_id']} onDelete={handelDelete} />
+            <Post post={x} key={x['_id']} onDelete={handleDelete} />
           ))}
         </Details>
       </InfiniteScroll>

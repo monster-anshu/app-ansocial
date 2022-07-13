@@ -42,7 +42,7 @@ const ChatContainer: React.FC<Proptypes> = ({ reciver }) => {
     setMessages(newMessages);
   };
 
-  const handelSubmit = (text: string) => {
+  const handleSubmit = (text: string) => {
     const newMsg: MessageType = {
       text,
       sender: user?._id as string,
@@ -103,7 +103,7 @@ const ChatContainer: React.FC<Proptypes> = ({ reciver }) => {
         ))}
       </Chats>
 
-      <SendMessage onSubmit={handelSubmit} />
+      <SendMessage onSubmit={handleSubmit} />
     </Container>
   ) : (
     <Loader />

@@ -21,7 +21,7 @@ const Login = () => {
   const [show, setShow] = useState(false);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const handelLogin = async (e: FormEvent<HTMLFormElement>) => {
+  const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const tID = toast.info('Logging user . Please wait !', {
       isLoading: true,
@@ -44,7 +44,7 @@ const Login = () => {
   return (
     <Container>
       <h1>Ansocial</h1>
-      <Form onSubmit={handelLogin}>
+      <Form onSubmit={handleLogin}>
         <h2>Login Here</h2>
         <InputContainer>
           <Input

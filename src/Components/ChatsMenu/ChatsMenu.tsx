@@ -13,7 +13,7 @@ interface Proptypes {
 }
 
 const ChatsMenu: React.FC<Proptypes> = ({ selected, onSelect, users }) => {
-  const handelSelect = (id: string) => {
+  const handleSelect = (id: string) => {
     onSelect?.(id);
   };
 
@@ -26,7 +26,7 @@ const ChatsMenu: React.FC<Proptypes> = ({ selected, onSelect, users }) => {
           img={x['profilePicture']}
           key={x['_id']}
           id={x['_id']}
-          onClick={handelSelect}
+          onClick={handleSelect}
           isSelected={selected === x['_id']}
         />
       ))}

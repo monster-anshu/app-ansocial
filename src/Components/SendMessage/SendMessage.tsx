@@ -7,14 +7,14 @@ interface Proptypes {
 
 const SendMessage: React.FC<Proptypes> = ({ onSubmit }) => {
   const [msg, setMsg] = useState('');
-  const handelSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (msg.length < 1) return;
     onSubmit?.(msg);
     // setMsg('');
   };
   return (
-    <Container onSubmit={handelSubmit}>
+    <Container onSubmit={handleSubmit}>
       <textarea
         rows={5}
         onChange={(e) => setMsg(e.target.value)}

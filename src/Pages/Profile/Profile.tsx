@@ -33,7 +33,7 @@ const Profile = () => {
     });
   };
 
-  const handelDelete = (id: string) => {
+  const handleDelete = (id: string) => {
     if (!user) return;
     const newPost = posts.filter((item) => item['_id'] !== id);
     setPosts(newPost);
@@ -44,7 +44,7 @@ const Profile = () => {
     setUser(newUser);
   };
 
-  const handelShare = (newPost: PostType) => {
+  const handleShare = (newPost: PostType) => {
     if (!user) return;
     const updatedPost = [newPost, ...posts];
     setPosts(updatedPost);
@@ -85,7 +85,7 @@ const Profile = () => {
       </ProfileData>
 
       <Details>
-        {isCurrent && <Share onShare={handelShare} />}
+        {isCurrent && <Share onShare={handleShare} />}
         {<Follow user={user} isCurrent={isCurrent} setUser={setUser} />}
       </Details>
       <Posts>
@@ -100,7 +100,7 @@ const Profile = () => {
           scrollableTarget={'profileScoller'}
         >
           {posts.map((X) => (
-            <Post key={X['_id']} post={X} onDelete={handelDelete} />
+            <Post key={X['_id']} post={X} onDelete={handleDelete} />
           ))}
         </InfiniteScroll>
       </Posts>

@@ -47,7 +47,7 @@ interface ContextTypes {
   myPost: PostType[];
   setMyPost?: React.Dispatch<SetStateAction<PostType[]>>;
   setUser?: React.Dispatch<SetStateAction<null | UserType>>;
-  handelLogout?: () => void;
+  handleLogout?: () => void;
   socket: Socket | null;
 }
 
@@ -214,9 +214,9 @@ export const ContextProvider: React.FC<{ children: ReactElement }> = ({
     return result;
   };
 
-  const handelLogout = () => {
+  const handleLogout = () => {
     setToken(null);
-    // socket?.emit('disconnect');
+    socket?.emit('logout');
     localStorage.removeItem('token');
     navigate('/login');
   };
@@ -231,7 +231,7 @@ export const ContextProvider: React.FC<{ children: ReactElement }> = ({
     myPost,
     setMyPost,
     setUser,
-    handelLogout,
+    handleLogout,
     socket,
   };
   return (

@@ -37,7 +37,7 @@ const TransitionsModal: React.FC<Proptype> = ({
       .finally(() => setLoading(false));
   };
 
-  const handelFollow = (Fuser: UserType) => {
+  const handleFollow = (Fuser: UserType) => {
     const arr = users.map((Nuser) => {
       if (!(Nuser._id === Fuser._id)) return Nuser;
       return {
@@ -101,7 +101,7 @@ const TransitionsModal: React.FC<Proptype> = ({
                         isFollowing={Fuser.amIFollowing}
                         type={'button'}
                         onClick={() => {
-                          handelFollow(Fuser);
+                          handleFollow(Fuser);
                         }}
                       >
                         {Fuser.amIFollowing ? 'Following' : 'Follow'}

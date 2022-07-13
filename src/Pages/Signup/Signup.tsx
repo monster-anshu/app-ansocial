@@ -14,7 +14,7 @@ const Signup = () => {
   const [cpassword, setCPassword] = useState('');
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const handelLogin = async (e: FormEvent<HTMLFormElement>) => {
+  const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     if (!signUp) return;
@@ -34,7 +34,7 @@ const Signup = () => {
   return (
     <Container>
       <h1>Ansocial</h1>
-      <Form onSubmit={handelLogin}>
+      <Form onSubmit={handleLogin}>
         <h2>Signup Here</h2>
         <Input
           required
