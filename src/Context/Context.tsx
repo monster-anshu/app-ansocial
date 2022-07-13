@@ -9,7 +9,7 @@ import React, {
 } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast, Id } from 'react-toastify';
-import { Socket, io } from 'socket.io-client';
+import { io, Socket } from 'socket.io-client';
 import { UserType, MessageType } from 'Types';
 
 const host = process.env.REACT_APP_API_URL;
@@ -47,7 +47,6 @@ interface ContextTypes {
   getUser?: () => Promise<boolean>;
   setUser?: React.Dispatch<SetStateAction<null | UserType>>;
   handleLogout?: () => void;
-  socket: Socket | null;
   msgAudioRef?: React.RefObject<HTMLAudioElement>;
   handleRemoveUnread?: (id: string) => void;
   unreadMsg: MessageType[];
@@ -58,7 +57,6 @@ export const Context = createContext<ContextTypes>({
   token: null,
   host,
   fetchAxios,
-  socket: null,
   unreadMsg: [],
 });
 export const ContextProvider: React.FC<{ children: ReactElement }> = ({
@@ -67,6 +65,7 @@ export const ContextProvider: React.FC<{ children: ReactElement }> = ({
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [user, setUser] = useState<ContextTypes['user']>(null);
   const [unreadMsg, setUnreadMsg] = useState<MessageType[]>([]);
+  const [socket, setSocket] = useState<Socket | null>(null);
   const msgAudioRef = useRef<HTMLAudioElement>(null);
   const location = useLocation();
   const fetchAxios = axios.create({
@@ -78,8 +77,6 @@ export const ContextProvider: React.FC<{ children: ReactElement }> = ({
   });
 
   const navigate = useNavigate();
-
-  const IO = useRef<null | Socket>(null);
 
   const removeUser = async () => {
     localStorage.removeItem('token');
@@ -110,10 +107,9 @@ export const ContextProvider: React.FC<{ children: ReactElement }> = ({
     })
       .then(({ data }) => {
         setUser({ ...data.user });
-        const socket = io(process.env.REACT_APP_SOCKET_URL as string);
-        socket.emit('online', { userId: data.user._id });
-        IO.current = socket;
-        // setSocket(IO.c);
+        const IO = io(process.env.REACT_APP_SOCKET_URL as string);
+        IO.emit('online', { userId: data.user._id });
+        setSocket(IO);
         return true;
       })
       .catch((err) => {
@@ -220,14 +216,14 @@ export const ContextProvider: React.FC<{ children: ReactElement }> = ({
 
   const handleLogout = () => {
     setToken(null);
-    IO.current?.emit('logout');
+    socket?.emit('logout');
     localStorage.removeItem('token');
     navigate('/login');
   };
   useEffect(() => {
-    if (!user) return;
-    IO.current?.off('reciveChat');
-    IO.current?.on('reciveChat', (newMsg: MessageType) => {
+    if (!socket) return;
+    socket.off('reciveChat');
+    socket.on('reciveChat', (newMsg: MessageType) => {
       fetchAxios.get(`/user/id/${newMsg.sender}`).then((res) => {
         const mUser: UserType = res.data.user;
         if (location.pathname !== '/messenger') {
@@ -239,7 +235,7 @@ export const ContextProvider: React.FC<{ children: ReactElement }> = ({
         handleAddUnread(newMsg);
       });
     });
-  }, [user, unreadMsg]);
+  }, [socket, unreadMsg]);
   const value: ContextTypes = {
     user,
     token,
@@ -249,7 +245,6 @@ export const ContextProvider: React.FC<{ children: ReactElement }> = ({
     fetchAxios,
     setUser,
     handleLogout,
-    socket: null,
     msgAudioRef,
     handleRemoveUnread,
     unreadMsg,
