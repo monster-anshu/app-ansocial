@@ -3,6 +3,7 @@ import React, {
   createContext,
   ReactElement,
   SetStateAction,
+  useRef,
   useState,
 } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -68,6 +69,8 @@ export const ContextProvider: React.FC<{ children: ReactElement }> = ({
 
   const [socket, setSocket] = useState<Socket | null>(null);
 
+  const msgAudioRef = useRef<HTMLAudioElement>(null);
+
   const fetchAxios = axios.create({
     baseURL: host,
     headers: {
@@ -103,6 +106,9 @@ export const ContextProvider: React.FC<{ children: ReactElement }> = ({
         const IO = io(process.env.REACT_APP_SOCKET_URL as string);
         setSocket(IO);
         IO.emit('online', { userId: data.user._id });
+        IO.on('reciveChat', () => {
+          msgAudioRef.current?.play();
+        });
         return true;
       })
       .catch((err) => {
@@ -231,6 +237,7 @@ export const ContextProvider: React.FC<{ children: ReactElement }> = ({
   return (
     <Context.Provider value={value}>
       {children}
+      <audio src={'/assets/audio/message.mp3'} ref={msgAudioRef} />
       <ToastContainer autoClose={2500} position={'top-right'} />
     </Context.Provider>
   );

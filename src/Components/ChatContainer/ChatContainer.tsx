@@ -11,6 +11,7 @@ interface Proptypes {
 
 const ChatContainer: React.FC<Proptypes> = ({ reciver }) => {
   const { fetchAxios, user, socket } = useContext(Context);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const ref = useRef<HTMLDivElement | null>(null);
 
@@ -74,6 +75,7 @@ const ChatContainer: React.FC<Proptypes> = ({ reciver }) => {
       };
 
       if (!(newMessage.sender === reciver._id)) return;
+      audioRef.current?.play();
       addMessage(newMessage);
     });
   }, [socket, messages]);
@@ -84,6 +86,7 @@ const ChatContainer: React.FC<Proptypes> = ({ reciver }) => {
 
   return user ? (
     <Container>
+      <audio src="/assets/audio/msg.wav" ref={audioRef} />
       <Chats ref={ref}>
         {messages.map((message) => (
           <Chat

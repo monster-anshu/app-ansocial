@@ -11,7 +11,7 @@ const SendMessage: React.FC<Proptypes> = ({ onSubmit }) => {
     e.preventDefault();
     if (msg.length < 1) return;
     onSubmit?.(msg);
-    setMsg('');
+    // setMsg('');
   };
   return (
     <Container onSubmit={handelSubmit}>
