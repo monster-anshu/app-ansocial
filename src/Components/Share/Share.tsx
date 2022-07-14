@@ -17,8 +17,7 @@ import { EmojiEmotions, Label, PermMedia, Room } from '@material-ui/icons';
 import { Context } from 'Context';
 import { Loader } from 'Components';
 import { PostType } from 'Types';
-import { toast, ToastContainer } from 'react-toastify';
-
+import { toast } from 'react-hot-toast';
 interface Proptypes {
   onShare?: (newPost: PostType) => void;
 }
@@ -28,11 +27,13 @@ const Share: React.FC<Proptypes> = ({ onShare }) => {
   const { fetchAxios, user } = useContext(Context);
   const [file, setFile] = useState<File | null | undefined>(null);
   const [isLoading, setIsLoading] = useState(false);
+
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (text.length < 4) {
-      toast.dismiss();
-      toast.warn('Description should be at least 4 character ');
+      toast(<strong>Text is too short (min 4 characters)</strong>, {
+        position: 'bottom-center',
+      });
       return;
     }
     setIsLoading(true);
@@ -62,7 +63,6 @@ const Share: React.FC<Proptypes> = ({ onShare }) => {
 
   return (
     <Container onSubmit={handleSubmit}>
-      <ToastContainer />
       {isLoading && (
         <LoaderDiv>
           <Loader />

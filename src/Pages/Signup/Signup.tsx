@@ -2,7 +2,6 @@ import { Loader } from 'Components';
 import { Context } from 'Context';
 import React, { FormEvent, useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
 import { Container, Create, Forget, Form, Input, LoginBtn } from './style';
 
 const Signup = () => {
@@ -18,18 +17,17 @@ const Signup = () => {
     e.preventDefault();
     setLoading(true);
     if (!signUp) return;
-    const tID = toast.info('Creating your account !', {
-      isLoading: true,
-    });
-    const result = await signUp({
-      name,
-      username,
-      email,
-      password,
-      tID,
-    });
-    setLoading(false);
-    if (result) navigate('/login');
+    try {
+      const result = await signUp({
+        name,
+        username,
+        email,
+        password,
+      });
+      if (result) navigate('/login');
+    } finally {
+      setLoading(false);
+    }
   };
   return (
     <Container>
@@ -82,14 +80,14 @@ const Signup = () => {
           minLength={6}
         />
         <LoginBtn type={'submit'} disabled={loading}>
-          {loading ? <Loader /> : <>Signup</>}
+          {loading ? <Loader width={20} color={'#ffffff'} /> : <>Signup</>}
         </LoginBtn>
         <Forget>
           <Link to={'/forget'}></Link>
           <p> Already have a account ?</p>
           <Link to={'/login'} onClick={(e) => loading && e.preventDefault()}>
             <Create disabled={loading}>
-              {loading ? <Loader /> : <>Sign in</>}
+              {loading ? <Loader width={20} color={'#ffffff'} /> : <>Sign in</>}
             </Create>
           </Link>
         </Forget>

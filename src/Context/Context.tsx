@@ -8,10 +8,9 @@ import React, {
   useState,
 } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ToastContainer, toast, Id } from 'react-toastify';
 import { io, Socket } from 'socket.io-client';
 import { UserType, MessageType } from 'Types';
-
+import toast, { Toaster } from 'react-hot-toast';
 const host = process.env.REACT_APP_API_URL;
 
 const fetchAxios = axios.create({
@@ -29,20 +28,17 @@ interface ContextTypes {
   }: {
     email: string;
     password: string;
-    tID: Id;
   }) => Promise<boolean>;
   signUp?: ({
     name,
     username,
     email,
     password,
-    tID,
   }: {
     name: string;
     username: string;
     email: string;
     password: string;
-    tID: Id;
   }) => Promise<boolean>;
   getUser?: () => Promise<boolean>;
   setUser?: React.Dispatch<SetStateAction<null | UserType>>;
@@ -86,8 +82,33 @@ export const ContextProvider: React.FC<{ children: ReactElement }> = ({
     navigate('/login');
   };
   const handleAddUnread = (msg: MessageType) => {
-    const newMsg = unreadMsg.concat(msg);
-    setUnreadMsg(newMsg);
+    console.log('Adding msg');
+    fetchAxios.get(`/user/id/${msg.sender}`).then((res) => {
+      const mUser: UserType = res.data.user;
+      if (location.pathname !== '/messenger') {
+        toast(
+          <div
+            onClick={() =>
+              navigate('/messenger', {
+                state: mUser,
+              })
+            }
+            style={{
+              cursor: 'pointer',
+            }}
+          >
+            <strong>{mUser.name} : </strong>
+            <span> {msg.text} </span>
+          </div>,
+          {
+            position: 'bottom-right',
+            icon: <img src={mUser.profilePicture} height={20} width={20} />,
+          },
+        );
+        msgAudioRef.current?.play();
+      }
+      setUnreadMsg((unread) => [...unread, msg]);
+    });
   };
   const handleRemoveUnread = (id: string) => {
     const newMsg = unreadMsg.filter((msg) => msg.sender !== id);
@@ -125,47 +146,38 @@ export const ContextProvider: React.FC<{ children: ReactElement }> = ({
     method: 'POST',
   });
 
-  const login: ContextTypes['login'] = async ({ email, password, tID }) => {
+  const login: ContextTypes['login'] = async ({ email, password }) => {
     if (!host) return false;
-    const result = await Auth({
+    const promise = Auth({
       url: 'login',
       data: {
         email,
         password,
       },
       method: 'POST',
-    })
-      .then((res) => {
-        setToken(res.data.token);
-        setToken(res.data.token);
-        localStorage.setItem('token', res.data.token);
-        toast.update(tID, {
-          isLoading: false,
-          type: 'success',
-          render: 'Login Successful',
-          autoClose: 2000,
-        });
-        return true;
-      })
-      .catch((err) => {
-        if (err.response.status === 404) {
-          toast.update(tID, {
-            isLoading: false,
-            type: 'error',
-            render: 'Wrong password or email',
-            autoClose: 2000,
-          });
-          return false;
-        }
-        toast.update(tID, {
-          isLoading: false,
-          render: 'User alredy exist',
-          autoClose: 2000,
-          type: 'warning',
-        });
-        return false;
-      });
-    return result;
+    }).then(({ data }) => {
+      setToken(data.token);
+      setToken(data.token);
+      localStorage.setItem('token', data.token);
+      return true;
+    });
+    toast.promise(
+      promise,
+      {
+        loading: <strong>Loading</strong>,
+        success: <strong>Login Successful</strong>,
+        error: (err) => {
+          const status = err?.response?.status;
+          if (status === 404)
+            return <strong>Enter valid Email or Password</strong>;
+          return <strong>Server Error</strong>;
+        },
+      },
+      {
+        position: 'bottom-center',
+      },
+    );
+    return promise;
   };
 
   const signUp: ContextTypes['signUp'] = async ({
@@ -173,11 +185,9 @@ export const ContextProvider: React.FC<{ children: ReactElement }> = ({
     username,
     email,
     password,
-    tID,
   }) => {
     if (!host) return false;
-
-    const result = await Auth({
+    const promise = Auth({
       url: 'register',
       data: {
         name,
@@ -185,59 +195,41 @@ export const ContextProvider: React.FC<{ children: ReactElement }> = ({
         email,
         password,
       },
-    })
-      .then(() => {
-        toast.update(tID, {
-          isLoading: false,
-          render: 'Success',
-          autoClose: 2000,
-        });
-        return true;
-      })
-      .catch((err) => {
-        if (err.response.status === 409) {
-          toast.update(tID, {
-            isLoading: false,
-            render: 'User alredy exist',
-            autoClose: 2000,
-            type: 'warning',
-          });
-          return false;
-        }
-        toast.update(tID, {
-          isLoading: false,
-          render: 'User alredy exist',
-          autoClose: 2000,
-          type: 'warning',
-        });
-        return false;
-      });
-    return result;
+    }).then(() => true);
+    toast.promise(
+      promise,
+      {
+        loading: <strong>Loading</strong>,
+        success: <strong>Account created successfuly</strong>,
+        error: (err) => {
+          const status = err?.response?.status;
+          if (status === 409)
+            return <strong>Email or Username Already Exists</strong>;
+          return <strong>Server Error</strong>;
+        },
+      },
+      {
+        position: 'bottom-center',
+      },
+    );
+
+    return promise;
   };
 
   const handleLogout = () => {
     setToken(null);
+    socket?.disconnect();
     setSocket(undefined);
     socket?.emit('logout');
     localStorage.removeItem('token');
     navigate('/login');
   };
+
   useEffect(() => {
     if (!socket) return;
-    socket.off('reciveChat');
-    socket.on('reciveChat', (newMsg: MessageType) => {
-      fetchAxios.get(`/user/id/${newMsg.sender}`).then((res) => {
-        const mUser: UserType = res.data.user;
-        if (location.pathname !== '/messenger') {
-          toast.info(`${mUser.name} : ${newMsg.text}`, {
-            position: 'bottom-right',
-          });
-          msgAudioRef.current?.play();
-        }
-        handleAddUnread(newMsg);
-      });
-    });
-  }, [socket, unreadMsg]);
+    socket.on('reciveChat', handleAddUnread);
+  }, [socket]);
+
   const value: ContextTypes = {
     user,
     token,
@@ -256,7 +248,7 @@ export const ContextProvider: React.FC<{ children: ReactElement }> = ({
     <Context.Provider value={value}>
       {children}
       <audio src={'/assets/audio/message.mp3'} ref={msgAudioRef} />
-      <ToastContainer autoClose={2500} position={'top-right'} />
+      <Toaster />
     </Context.Provider>
   );
 };

@@ -48,7 +48,7 @@ export const ProfileInfo = styled.div`
 `;
 export const Details = styled.div`
   display: flex;
-  justify-content: start;
+  justify-content: center;
   align-items: start;
   padding: 10px 30px;
   gap: 20px;
@@ -59,14 +59,35 @@ export const Details = styled.div`
 `;
 
 export const Posts = styled.div`
-  & > div > div {
-    padding: 10px 30px;
-    margin: 0 auto;
-    display: inline-grid;
-    grid-template-columns: repeat(1, 1fr);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  & > div {
     width: 100%;
-    gap: 20px;
-    align-items: flex-start;
-    justify-content: center;
+    & > div {
+      padding: 10px 30px;
+      margin: 0 auto;
+      display: flex;
+      width: 100%;
+      gap: 20px;
+      align-items: flex-start;
+      justify-content: center;
+    }
   }
+`;
+export const PM = styled.div`
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+  /* align-items: c; */
+`;
+export const CContainer = styled.div`
+  flex: 1;
+  height: 400px;
+  border-radius: 5px;
+  max-width: 500px;
+  background-color: #fff;
+  padding: 10px;
+  box-shadow: 0 0 10px gray;
 `;

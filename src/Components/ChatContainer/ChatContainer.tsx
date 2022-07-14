@@ -28,12 +28,7 @@ const ChatContainer: React.FC<Proptypes> = ({ reciver }) => {
   };
 
   const scrollToBottom = () => {
-    if (!ref.current) return;
-    const height = ref.current.scrollHeight;
-    ref.current.scroll({
-      behavior: 'smooth',
-      top: height,
-    });
+    ref.current?.scrollIntoView();
   };
 
   const addMessage = (message: MessageType) => {
@@ -81,24 +76,25 @@ const ChatContainer: React.FC<Proptypes> = ({ reciver }) => {
   useEffect(() => {
     handleRemoveUnread?.(reciver._id);
     fetchChat();
-  }, []);
+  }, [reciver]);
 
   return user ? (
     <Container>
       <audio src="/assets/audio/msg.wav" ref={audioRef} />
-      <Chats ref={ref}>
+      <Chats>
         {messages.map((message) => (
-          <Chat
-            key={message._id}
-            message={message}
-            isMine={message.sender === user._id}
-            profilePicture={
-              message.sender === user._id
-                ? user.profilePicture
-                : reciver.profilePicture
-            }
-            username={message.sender}
-          />
+          <div ref={ref} key={message._id}>
+            <Chat
+              message={message}
+              isMine={message.sender === user._id}
+              profilePicture={
+                message.sender === user._id
+                  ? user.profilePicture
+                  : reciver.profilePicture
+              }
+              username={message.sender}
+            />
+          </div>
         ))}
       </Chats>
 

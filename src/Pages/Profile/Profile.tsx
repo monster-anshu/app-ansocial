@@ -1,4 +1,4 @@
-import { Follow, Loader, Post, Share } from 'Components';
+import { ChatContainer, Follow, Loader, Post, Share } from 'Components';
 import { Context } from 'Context';
 import React, { useContext, useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
@@ -6,9 +6,11 @@ import { useParams } from 'react-router-dom';
 import { PostType, UserType } from 'Types';
 
 import {
+  CContainer,
   Container,
   CoverPicture,
   Details,
+  PM,
   Posts,
   ProfileData,
   ProfileInfo,
@@ -29,7 +31,14 @@ const Profile = () => {
     fetchAxios({
       url: `/post/userId/${id}?page=${currentPage}`,
     }).then(({ data }) => {
-      setPosts([...posts, ...data.post]);
+      setPosts(data.post);
+    });
+  };
+  const fetchPostsMore = (id: string, currentPage: number) => {
+    fetchAxios({
+      url: `/post/userId/${id}?page=${currentPage}`,
+    }).then(({ data }) => {
+      setPosts((post) => [post, ...data.post]);
     });
   };
 
@@ -88,22 +97,50 @@ const Profile = () => {
         {isCurrent && <Share onShare={handleShare} />}
         {<Follow user={user} isCurrent={isCurrent} setUser={setUser} />}
       </Details>
-      <Posts>
-        <InfiniteScroll
-          dataLength={posts.length}
-          loader={<></>}
-          next={() => {
-            fetchPosts(user._id, page + 1);
-            setPage((page) => page + 1);
-          }}
-          hasMore={posts.length < user.userPosts}
-          scrollableTarget={'profileScoller'}
-        >
-          {posts.map((X) => (
-            <Post key={X['_id']} post={X} onDelete={handleDelete} />
-          ))}
-        </InfiniteScroll>
-      </Posts>
+      <PM>
+        {posts.length ? (
+          <Posts>
+            <InfiniteScroll
+              dataLength={posts.length}
+              loader={<></>}
+              next={() => {
+                fetchPostsMore(user._id, page + 1);
+                setPage((page) => page + 1);
+              }}
+              hasMore={posts.length < user.userPosts}
+              scrollableTarget={'profileScoller'}
+              style={{
+                overflow: 'unset',
+              }}
+            >
+              {posts.map((X) => (
+                <Post key={X['_id']} post={X} onDelete={handleDelete} />
+              ))}
+            </InfiniteScroll>
+          </Posts>
+        ) : (
+          <div
+            style={{
+              flexGrow: 1,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              flexDirection: 'column',
+              gap: 10,
+              padding: 10,
+              height: 400,
+            }}
+          >
+            <h4>No Post Yet</h4>
+            <img src="/assets/nopost.svg" height={100} width={100} />
+          </div>
+        )}
+        {!isCurrent && (
+          <CContainer>
+            <ChatContainer reciver={user} />
+          </CContainer>
+        )}
+      </PM>
     </Container>
   ) : (
     <>User not found</>

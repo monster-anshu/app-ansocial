@@ -2,7 +2,6 @@ import { Loader } from 'Components';
 import { Context } from 'Context';
 import React, { FormEvent, useContext, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
 import {
   Container,
   Create,
@@ -23,19 +22,18 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const tID = toast.info('Logging user . Please wait !', {
-      isLoading: true,
-    });
     setLoading(true);
     if (!login) return;
-    const result = await login({
-      email,
-      password,
-      tID,
-    });
-    setLoading(false);
-    if (result) {
-      navigate('/home');
+    try {
+      const result = await login({
+        email,
+        password,
+      });
+      if (result) {
+        navigate('/home');
+      }
+    } finally {
+      setLoading(false);
     }
   };
   useEffect(() => {
@@ -73,14 +71,14 @@ const Login = () => {
           />
         </InputContainer>
         <LoginBtn type={'submit'} disabled={loading}>
-          {loading ? <Loader /> : <>Login</>}
+          {loading ? <Loader width={20} color={'#ffffff'} /> : <>Login</>}
         </LoginBtn>
         <Forget>
           <Link to={'/forget'}> Forget Password</Link>
           <p>New to Ansocial ?</p>
           <Link to={'/signup'} onClick={(e) => loading && e.preventDefault()}>
             <Create disabled={loading}>
-              {loading ? <Loader /> : <>Sign UP</>}
+              {loading ? <Loader width={20} color={'#ffffff'} /> : <>Sign UP</>}
             </Create>
           </Link>
         </Forget>

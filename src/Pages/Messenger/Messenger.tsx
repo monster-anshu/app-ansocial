@@ -22,15 +22,23 @@ const Messenger = () => {
     setSelected(id);
   };
 
+  const refreshList = () => {
+    setUsers((users) => {
+      return users.filter(
+        (nUser) => !users.some((sUser) => sUser._id === nUser._id),
+      );
+    });
+  };
+
   const addUser = async () => {
     if (!location.state) return;
-    const cond = typeof location.state === 'object';
-    if (!cond) return;
+    const isObject = typeof location.state === 'object';
+    if (!isObject) return;
     const nUser = location.state as UserType;
-    const conds = users.some((user) => user._id === nUser._id);
-    if (!conds) setUsers([nUser, ...users]);
-    console.log(nUser);
-    setSelected(nUser._id);
+    const isAlreadyExists = users.some((user) => user._id === nUser._id);
+    console.log(isAlreadyExists);
+    // if (!isAlreadyExists) setUsers((users) => [nUser, ...users]);
+    // setSelected(nUser._id);
   };
 
   const fetchUsers = async () => {
@@ -38,7 +46,7 @@ const Messenger = () => {
       url: '/chat/getUser/',
     })
       .then((res) => {
-        setUsers([...res.data, ...users]);
+        setUsers((users) => [...res.data, ...users]);
       })
       .catch((err) => console.log(err));
   };
@@ -50,15 +58,20 @@ const Messenger = () => {
 
   useEffect(() => {
     fetchUsers();
+    return () => {
+      setUsers([]);
+    };
   }, []);
+
   useEffect(() => {
     addUser();
+    // refreshList();
   }, [users]);
 
   useEffect(() => {
     if (!socket) return;
     socket.on('updateOnline', (data) => {
-      setOnlineUsers(data);
+      setOnlineUsers(() => data);
     });
   }, [socket]);
 
